@@ -1,12 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 type Coordinates = [number, number];
-type Arcs = Coordinates[];
 
-interface Geometry {
-  type: string;
-  arcs: Arcs;
+type Line = Coordinates[];
+
+type GlobalArcs = Line[];
+
+type ArcIndex = number;
+
+type Ring = ArcIndex[];
+
+type PolygonGeometry = Ring[];
+
+type MultiPolygonGeometry = PolygonGeometry[];
+
+interface BaseGeometry {
   properties: {
     dt_code: string;
     district: string;
@@ -16,6 +25,18 @@ interface Geometry {
   };
 }
 
+interface Polygon extends BaseGeometry {
+  type: "Polygon";
+  arcs: PolygonGeometry;
+}
+
+interface MultiPolygon extends BaseGeometry {
+  type: "MultiPolygon";
+  arcs: MultiPolygonGeometry;
+}
+
+type Geometry = Polygon | MultiPolygon;
+
 interface MapJSON {
   type: string;
   objects: {
@@ -24,7 +45,7 @@ interface MapJSON {
       geometries: Geometry[];
     };
   };
-  arcs: Arcs[];
+  arcs: GlobalArcs;
   bbox: [number, number, number, number];
 }
 
@@ -32,8 +53,10 @@ const PunjabMap = () => {
   const svgRef = useRef(null);
   const [mapData, setMapData] = useState<MapJSON | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<Geometry | null>(
+    null
+  );
 
   useEffect(() => {
     const loadMapData = async () => {
@@ -55,7 +78,7 @@ const PunjabMap = () => {
         setError(null);
       } catch (err) {
         console.error("Error loading map:", err);
-        setError(err.message);
+        setError((err as Error)?.message ?? String(err));
       } finally {
         setLoading(false);
       }
@@ -104,7 +127,7 @@ const PunjabMap = () => {
       .style("max-width", "200px");
 
     // Function to convert arc indices to coordinates
-    const arcToCoordinates = (arcIndex) => {
+    const arcToCoordinates = (arcIndex: ArcIndex) => {
       const isReversed = arcIndex < 0;
       const realIndex = isReversed ? Math.abs(arcIndex) - 1 : arcIndex;
       const arc = mapData.arcs[realIndex];
@@ -112,7 +135,7 @@ const PunjabMap = () => {
     };
 
     // Function to build polygon coordinates from arcs
-    const buildPolygon = (arcIndices) => {
+    const buildPolygon = (arcIndices: Ring) => {
       const coordinates = [];
       for (const arcIndex of arcIndices) {
         const arcCoords = arcToCoordinates(arcIndex);
@@ -122,10 +145,10 @@ const PunjabMap = () => {
     };
 
     // Convert geometries to SVG paths
-    const districts = mapData.objects.districts.geometries;
+    const districts: Geometry[] = mapData.objects.districts.geometries;
 
-    districts.forEach((district, index) => {
-      const paths: Arcs[] = [];
+    districts.forEach((district, _index) => {
+      const paths: GlobalArcs = [];
 
       if (district.type === "Polygon") {
         district.arcs.forEach((ring) => {
@@ -142,7 +165,7 @@ const PunjabMap = () => {
       }
 
       // Create SVG path for each polygon
-      paths.forEach((coords, pathIndex) => {
+      paths.forEach((coords, _pathIndex) => {
         if (coords.length === 0) return;
 
         const pathData = `M${coords.map((d) => d.join(",")).join("L")}Z`;
@@ -159,7 +182,7 @@ const PunjabMap = () => {
           .attr("stroke", "#ffffff")
           .attr("stroke-width", 0.5)
           .style("cursor", "pointer")
-          .on("mouseover", function (event, d) {
+          .on("mouseover", function (_event, d) {
             if (
               selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
             ) {
@@ -177,7 +200,7 @@ const PunjabMap = () => {
               .style("left", event.pageX + 10 + "px")
               .style("top", event.pageY - 10 + "px");
           })
-          .on("mouseout", function (event, d) {
+          .on("mouseout", function (_event, d) {
             if (
               selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
             ) {
@@ -185,13 +208,15 @@ const PunjabMap = () => {
             }
             tooltip.style("visibility", "hidden");
           })
-          .on("click", function (event, d) {
-            console.log("Clicked district:", d.properties);
+          .on("click", function (_event, d) {
             setSelectedDistrict(d);
 
             // Update all paths to show selection
             svg.selectAll("path").attr("fill", function (pathData) {
-              return pathData.properties?.dt_code === d.properties?.dt_code
+              console.log("path data", pathData);
+
+              return (pathData as Geometry).properties?.dt_code ===
+                d.properties?.dt_code
                 ? "#4a90e2"
                 : "#e0e0e0";
             });
