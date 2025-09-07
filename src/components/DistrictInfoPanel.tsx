@@ -34,25 +34,15 @@ const DistrictInfoPanel = ({
 
   if (!selectedDistrict) {
     return (
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden sticky top-4">
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            District Information
-          </h3>
-        </div>
+      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
         <div className="p-8">
           <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
-              <MapPin className="w-10 h-10 text-slate-400" />
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
+              <MapPin className="w-6 h-6 text-slate-400" />
             </div>
             <h4 className="text-xl font-semibold text-slate-800 mb-3">
               No District Selected
             </h4>
-            <small className="text-slate-600 leading-relaxed">
-              Tap any district on the map to view detailed relief information
-              and supplies.
-            </small>
           </div>
         </div>
       </div>
