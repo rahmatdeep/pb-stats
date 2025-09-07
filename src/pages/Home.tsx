@@ -1,10 +1,7 @@
 import PunjabMap from "../components/PunjabMap";
+
 function Home() {
-  return (
-    <div>
-      <PunjabMap />
-    </div>
-  );
+  return <PunjabMap />;
 }
 
 export default Home;

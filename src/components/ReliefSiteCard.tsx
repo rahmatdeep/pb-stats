@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Package, ChevronRight } from "lucide-react";
 import type { ReliefSite, Supply } from "../types/reliefData";
 import SupplyItemModal from "./SupplyItemModal";
 
@@ -10,69 +11,77 @@ const ReliefSiteCard = ({ site }: ReliefSiteCardProps) => {
   const [selectedSupply, setSelectedSupply] = useState<Supply | null>(null);
 
   const getStatusColor = (supply: Supply) => {
-    const daysRemaining = Math.floor((supply.currentQuantity + supply.bookedQuantity) / supply.avgConsumptionPerDay);
-    if (daysRemaining <= 2) return "text-red-600 bg-red-50";
-    if (daysRemaining <= 7) return "text-yellow-600 bg-yellow-50";
-    return "text-green-600 bg-green-50";
+    const daysRemaining = Math.floor(
+      (supply.currentQuantity + supply.bookedQuantity) /
+        supply.avgConsumptionPerDay
+    );
+    if (daysRemaining <= 2) return "text-red-700 bg-red-100 border-red-200";
+    if (daysRemaining <= 7)
+      return "text-amber-700 bg-amber-100 border-amber-200";
+    return "text-emerald-700 bg-emerald-100 border-emerald-200";
   };
 
   const getDaysRemaining = (supply: Supply) => {
-    return Math.floor((supply.currentQuantity + supply.bookedQuantity) / supply.avgConsumptionPerDay);
+    return Math.floor(
+      (supply.currentQuantity + supply.bookedQuantity) /
+        supply.avgConsumptionPerDay
+    );
   };
 
   return (
-    <div className="p-4 bg-white">
-      {/* Site Info */}
-      <div className="mb-4 pb-3 border-b border-gray-100">
-        <div className="text-sm text-gray-600 space-y-1">
-          <div>📍 {site.address}</div>
-        </div>
-      </div>
-
+    <div className="p-6">
       {/* Supplies */}
-      <div className="space-y-2">
-        <h6 className="font-medium text-gray-800 text-sm mb-3">
-          Available Supplies:
-        </h6>
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Package className="w-5 h-5 text-indigo-600" />
+          <h6 className="font-semibold text-slate-800">Available Supplies</h6>
+        </div>
 
-        {site.supplies.map((supply) => {
-          const daysRemaining = getDaysRemaining(supply);
-          return (
-            <div
-              key={supply.id}
-              onClick={() => setSelectedSupply(supply)}
-              className="p-3 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer transition-colors border border-gray-200"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="text-lg">{supply.icon}</span>
-                  <div>
-                    <div className="font-medium text-gray-800 text-sm">
-                      {supply.name}
+        <div className="space-y-3">
+          {site.supplies.map((supply) => {
+            const daysRemaining = getDaysRemaining(supply);
+            return (
+              <div
+                key={supply.id}
+                onClick={() => setSelectedSupply(supply)}
+                className="group p-4 bg-gradient-to-r from-white to-slate-50 rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="text-xl p-2 bg-white rounded-lg shadow-sm">
+                      {supply.icon}
                     </div>
-                    <div className="text-xs text-gray-600">
-                      Click for details
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-md text-slate-800 mb-1">
+                        {supply.name}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-800">
-                    {supply.currentQuantity} {supply.unit}
-                  </div>
-                  {supply.bookedQuantity > 0 && (
-                    <div className="text-xs text-blue-600">
-                      +{supply.bookedQuantity} incoming
+
+                  <div className="text-right ml-4">
+                    <div className="font-semibold text-sm text-slate-800 mb-1">
+                      {supply.currentQuantity} {supply.unit}
                     </div>
-                  )}
-                  <div className={`text-xs px-2 py-1 rounded-full mt-1 ${getStatusColor(supply)}`}>
-                    {daysRemaining} days left
+                    {supply.bookedQuantity > 0 && (
+                      <div className="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full mb-2">
+                        +{supply.bookedQuantity} incoming
+                      </div>
+                    )}
+                    <div
+                      className={`text-xs px-3 py-1 rounded-full border font-medium ${getStatusColor(
+                        supply
+                      )}`}
+                    >
+                      {daysRemaining} days left
+                    </div>
                   </div>
+
+                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors ml-2" />
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Supply Modal */}

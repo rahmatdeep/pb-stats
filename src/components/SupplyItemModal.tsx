@@ -1,3 +1,11 @@
+import {
+  Calendar,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle,
+  Package,
+  X,
+} from "lucide-react";
 import type { Supply } from "../types/reliefData";
 
 interface SupplyItemModalProps {
@@ -6,143 +14,195 @@ interface SupplyItemModalProps {
   onClose: () => void;
 }
 
-const SupplyItemModal = ({ supply, siteName, onClose }: SupplyItemModalProps) => {
+const SupplyItemModal = ({
+  supply,
+  siteName,
+  onClose,
+}: SupplyItemModalProps) => {
   const totalQuantity = supply.currentQuantity + supply.bookedQuantity;
   const daysRemaining = Math.floor(totalQuantity / supply.avgConsumptionPerDay);
-  
+
   const getSuggestedDonationDate = () => {
-    const suggestedDays = Math.max(1, daysRemaining - 3); // Suggest donation 3 days before running out
+    const suggestedDays = Math.max(1, daysRemaining - 3);
     const date = new Date();
     date.setDate(date.getDate() + suggestedDays);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const getUrgencyLevel = () => {
-    if (daysRemaining <= 2) return { level: "Critical", color: "text-red-600 bg-red-100", emoji: "🚨" };
-    if (daysRemaining <= 7) return { level: "Medium", color: "text-yellow-600 bg-yellow-100", emoji: "⚠️" };
-    return { level: "Low", color: "text-green-600 bg-green-100", emoji: "✅" };
+    if (daysRemaining <= 2)
+      return {
+        level: "Critical",
+        color: "text-red-700 bg-red-100 border-red-200",
+        icon: <AlertTriangle className="w-5 h-5" />,
+      };
+    if (daysRemaining <= 7)
+      return {
+        level: "Medium",
+        color: "text-amber-700 bg-amber-100 border-amber-200",
+        icon: <AlertTriangle className="w-5 h-5" />,
+      };
+    return {
+      level: "Low",
+      color: "text-emerald-700 bg-emerald-100 border-emerald-200",
+      icon: <CheckCircle className="w-5 h-5" />,
+    };
   };
 
   const urgency = getUrgencyLevel();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 rounded-t-2xl">
           <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                {supply.icon} {supply.name}
-              </h3>
-              <p className="text-sm text-gray-600">{siteName}</p>
+            <div className="text-white">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">{supply.icon}</span>
+                <h3 className="text-xl font-bold">{supply.name}</h3>
+              </div>
+              <p className="text-indigo-100 text-sm">{siteName}</p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center"
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors text-white"
             >
-              ×
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-6">
           {/* Urgency Badge */}
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${urgency.color}`}>
-            {urgency.emoji} {urgency.level} Priority
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium ${urgency.color}`}
+          >
+            {urgency.icon}
+            {urgency.level} Priority
           </div>
 
           {/* Current Status */}
-          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-            <h4 className="font-semibold text-gray-800">Current Status</h4>
-            
+          <div className="bg-slate-50 rounded-xl p-5 space-y-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Package className="w-5 h-5 text-slate-600" />
+              <h4 className="font-semibold text-slate-800">
+                Current Inventory
+              </h4>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+              <div className="text-center bg-white rounded-lg p-4 border border-slate-200">
+                <div className="text-3xl font-bold text-indigo-600 mb-1">
                   {supply.currentQuantity}
                 </div>
-                <div className="text-xs text-gray-600">Available Now</div>
+                <div className="text-xs text-slate-600 uppercase tracking-wide">
+                  Available Now
+                </div>
               </div>
-              
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+
+              <div className="text-center bg-white rounded-lg p-4 border border-slate-200">
+                <div className="text-3xl font-bold text-emerald-600 mb-1">
                   +{supply.bookedQuantity}
                 </div>
-                <div className="text-xs text-gray-600">Incoming</div>
+                <div className="text-xs text-slate-600 uppercase tracking-wide">
+                  Incoming
+                </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-200">
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
               <div className="text-center">
-                <div className="text-lg font-semibold text-gray-800">
+                <div className="text-2xl font-bold text-slate-800 mb-1">
                   {totalQuantity} {supply.unit}
                 </div>
-                <div className="text-sm text-gray-600">Total Available</div>
+                <div className="text-sm text-slate-600">Total Available</div>
               </div>
             </div>
           </div>
 
           {/* Consumption Analysis */}
-          <div className="bg-blue-50 p-4 rounded-lg space-y-3">
-            <h4 className="font-semibold text-gray-800">Consumption Analysis</h4>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Daily Usage:</span>
-                <span className="font-medium">{supply.avgConsumptionPerDay} {supply.unit}/day</span>
+          <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
+            <div className="flex items-center gap-3 mb-4">
+              <TrendingDown className="w-5 h-5 text-blue-600" />
+              <h4 className="font-semibold text-slate-800">Usage Analytics</h4>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-slate-600">Daily Consumption:</span>
+                <span className="font-semibold text-slate-800">
+                  {supply.avgConsumptionPerDay} {supply.unit}/day
+                </span>
               </div>
-              
-              <div className="flex justify-between">
-                <span className="text-gray-600">Days Remaining:</span>
-                <span className={`font-medium ${daysRemaining <= 7 ? 'text-red-600' : 'text-green-600'}`}>
+
+              <div className="flex justify-between items-center py-2">
+                <span className="text-slate-600">Supply Duration:</span>
+                <span
+                  className={`font-semibold ${
+                    daysRemaining <= 7 ? "text-red-600" : "text-emerald-600"
+                  }`}
+                >
                   {daysRemaining} days
                 </span>
               </div>
-              
-              <div className="flex justify-between">
-                <span className="text-gray-600">Weekly Need:</span>
-                <span className="font-medium">{supply.avgConsumptionPerDay * 7} {supply.unit}/week</span>
+
+              <div className="flex justify-between items-center py-2">
+                <span className="text-slate-600">Weekly Requirement:</span>
+                <span className="font-semibold text-slate-800">
+                  {supply.avgConsumptionPerDay * 7} {supply.unit}/week
+                </span>
               </div>
             </div>
           </div>
 
           {/* Donation Suggestion */}
-          <div className="bg-green-50 p-4 rounded-lg space-y-3">
-            <h4 className="font-semibold text-gray-800">💡 Donation Suggestion</h4>
-            
-            <div className="space-y-2">
-              <p className="text-sm text-gray-700">
-                Based on current consumption patterns, we suggest scheduling donations by:
-              </p>
-              
-              <div className="bg-white p-3 rounded border border-green-200">
-                <div className="font-medium text-green-700">
-                  📅 {getSuggestedDonationDate()}
-                </div>
-                <div className="text-sm text-gray-600 mt-1">
-                  Suggested quantity: {supply.avgConsumptionPerDay * 7} {supply.unit} (1 week supply)
-                </div>
+          <div className="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
+            <div className="flex items-center gap-3 mb-4">
+              <Calendar className="w-5 h-5 text-emerald-600" />
+              <h4 className="font-semibold text-slate-800">
+                Donation Recommendation
+              </h4>
+            </div>
+
+            <p className="text-slate-700 mb-4 leading-relaxed">
+              Based on current consumption patterns, we recommend scheduling
+              donations by:
+            </p>
+
+            <div className="bg-white rounded-lg p-4 border border-emerald-300">
+              <div className="font-semibold text-emerald-700 mb-2">
+                📅 {getSuggestedDonationDate()}
+              </div>
+              <div className="text-sm text-slate-600">
+                Suggested quantity:{" "}
+                <span className="font-medium">
+                  {supply.avgConsumptionPerDay * 7} {supply.unit}
+                </span>{" "}
+                (1 week supply)
               </div>
             </div>
           </div>
 
-          {/* Action Button */}
-          <button className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-center">
-            🤝 Schedule Donation
-          </button>
-          
-          <button 
-            onClick={onClose}
-            className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors text-center"
-          >
-            Close
-          </button>
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            <button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl">
+              🤝 Schedule Donation
+            </button>
+
+            <button
+              onClick={onClose}
+              className="w-full bg-slate-100 text-slate-700 py-3 px-6 rounded-xl hover:bg-slate-200 transition-colors font-medium"
+            >
+              Close Details
+            </button>
+          </div>
         </div>
       </div>
     </div>

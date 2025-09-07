@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import * as d3 from "d3";
 import DistrictInfoPanel from "./DistrictInfoPanel";
 
@@ -52,7 +53,6 @@ const PunjabMap = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<Geometry | null>(
     null
   );
-
   useEffect(() => {
     const loadMapData = async () => {
       try {
@@ -220,41 +220,65 @@ const PunjabMap = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Loading Punjab map...</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-medium text-slate-700">
+            Loading Punjab map...
+          </p>
+          <p className="text-sm text-slate-500 mt-1">
+            Please wait while we prepare the relief data
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-red-500">
-          Error: {error}
-          <br />
-          <small className="text-gray-500 mt-2 block">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">
+            Map Loading Error
+          </h3>
+          <p className="text-red-600 mb-2">{error}</p>
+          <p className="text-sm text-slate-500">
             Make sure punjab.json exists in public/projected_maps/
-          </small>
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Punjab Districts - Relief Management
-      </h2>
-
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map Section */}
           <div className="lg:col-span-2">
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg bg-white p-4">
-              <svg ref={svgRef} className="w-full h-auto max-w-full"></svg>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Hover over districts for details • Click to select
-              </p>
+            <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPin className="w-5 h-5 text-indigo-600" />
+                  <h2 className="text-lg font-semibold text-slate-800">
+                    Punjab District Map
+                  </h2>
+                </div>
+
+                <div className="bg-slate-50 rounded-xl p-4">
+                  <svg ref={svgRef} className="w-full h-auto max-w-full"></svg>
+                </div>
+
+                <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                  <p className="text-sm text-slate-700 text-center">
+                    💡 <strong>Tap any district</strong> to view relief sites
+                    and supply information
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
