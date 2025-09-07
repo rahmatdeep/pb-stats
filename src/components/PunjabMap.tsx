@@ -213,8 +213,6 @@ const PunjabMap = () => {
 
             // Update all paths to show selection
             svg.selectAll("path").attr("fill", function (pathData) {
-              console.log("path data", pathData);
-
               return (pathData as Geometry).properties?.dt_code ===
                 d.properties?.dt_code
                 ? "#4a90e2"
