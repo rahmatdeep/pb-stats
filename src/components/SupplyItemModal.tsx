@@ -1,12 +1,13 @@
 import {
   Calendar,
   TrendingDown,
-  AlertTriangle,
-  CheckCircle,
   Package,
   X,
+  AlertTriangle,
+  CheckCircle,
 } from "lucide-react";
 import type { Supply } from "../types/reliefData";
+import { getUrgencyLevel } from "../utils/urgencyUtils";
 
 interface SupplyItemModalProps {
   supply: Supply;
@@ -34,31 +35,17 @@ const SupplyItemModal = ({
     });
   };
 
-  const getUrgencyLevel = () => {
-    if (daysRemaining <= 2)
-      return {
-        level: "Critical",
-        color: "text-red-700 bg-red-100 border-red-200",
-        icon: <AlertTriangle className="w-5 h-5" />,
-      };
-    if (daysRemaining <= 7)
-      return {
-        level: "Medium",
-        color: "text-amber-700 bg-amber-100 border-amber-200",
-        icon: <AlertTriangle className="w-5 h-5" />,
-      };
-    return {
-      level: "Low",
-      color: "text-emerald-700 bg-emerald-100 border-emerald-200",
-      icon: <CheckCircle className="w-5 h-5" />,
-    };
+  const urgency = getUrgencyLevel(supply);
+  const getIcon = () => {
+    if (urgency.level === "Critical" || urgency.level === "Medium") {
+      return <AlertTriangle className="w-5 h-5" />;
+    }
+    return <CheckCircle className="w-5 h-5" />;
   };
-
-  const urgency = getUrgencyLevel();
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 rounded-t-2xl">
           <div className="flex justify-between items-start">
@@ -84,7 +71,7 @@ const SupplyItemModal = ({
           <div
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium ${urgency.color}`}
           >
-            {urgency.icon}
+            {getIcon()}
             {urgency.level} Priority
           </div>
 
@@ -129,12 +116,12 @@ const SupplyItemModal = ({
 
           {/* Consumption Analysis */}
           <div className="bg-blue-50 rounded-xl p-5 border border-blue-200">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <TrendingDown className="w-5 h-5 text-blue-600" />
               <h4 className="font-semibold text-slate-800">Usage Analytics</h4>
             </div>
 
-            <div className="space-y-3">
+            <div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-slate-600">Daily Consumption:</span>
                 <span className="font-semibold text-slate-800">
@@ -152,13 +139,6 @@ const SupplyItemModal = ({
                   {daysRemaining} days
                 </span>
               </div>
-
-              <div className="flex justify-between items-center py-2">
-                <span className="text-slate-600">Weekly Requirement:</span>
-                <span className="font-semibold text-slate-800">
-                  {supply.avgConsumptionPerDay * 7} {supply.unit}/week
-                </span>
-              </div>
             </div>
           </div>
 
@@ -172,13 +152,12 @@ const SupplyItemModal = ({
             </div>
 
             <p className="text-slate-700 mb-4 leading-relaxed">
-              Based on current consumption patterns, we recommend scheduling
-              donations by:
+              Based on current consumption patterns, we recommend donating on:
             </p>
 
             <div className="bg-white rounded-lg p-4 border border-emerald-300">
-              <div className="font-semibold text-emerald-700 mb-2">
-                📅 {getSuggestedDonationDate()}
+              <div className="font-semibold text-emerald-700">
+                {getSuggestedDonationDate()}
               </div>
               <div className="text-sm text-slate-600">
                 Suggested quantity:{" "}
@@ -193,7 +172,7 @@ const SupplyItemModal = ({
           {/* Action Buttons */}
           <div className="space-y-3 pt-2">
             <button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg hover:shadow-xl">
-              🤝 Schedule Donation
+              Donate
             </button>
 
             <button
