@@ -1,18 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import DistrictInfoPanel from "./DistrictInfoPanel";
 
 type Coordinates = [number, number];
-
 type Line = Coordinates[];
-
 type GlobalArcs = Line[];
-
 type ArcIndex = number;
-
 type Ring = ArcIndex[];
-
 type PolygonGeometry = Ring[];
-
 type MultiPolygonGeometry = PolygonGeometry[];
 
 interface BaseGeometry {
@@ -35,7 +30,7 @@ interface MultiPolygon extends BaseGeometry {
   arcs: MultiPolygonGeometry;
 }
 
-type Geometry = Polygon | MultiPolygon;
+export type Geometry = Polygon | MultiPolygon;
 
 interface MapJSON {
   type: string;
@@ -248,7 +243,7 @@ const PunjabMap = () => {
   return (
     <div className="p-4 min-h-screen bg-gray-50">
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Punjab Districts
+        Punjab Districts - Relief Management
       </h2>
 
       <div className="max-w-7xl mx-auto">
@@ -263,113 +258,12 @@ const PunjabMap = () => {
             </div>
           </div>
 
-          {/* Data Panel */}
+          {/* District Info Panel */}
           <div className="lg:col-span-1">
-            <div className="border border-gray-300 rounded-lg shadow-lg bg-white sticky top-4">
-              <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  District Information
-                </h3>
-              </div>
-
-              <div className="p-4">
-                {selectedDistrict ? (
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-xl font-bold text-blue-600 mb-2">
-                        {selectedDistrict.properties.district}
-                      </h4>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <div className="text-sm font-medium text-gray-600">
-                          State
-                        </div>
-                        <div className="text-lg text-gray-900">
-                          {selectedDistrict.properties.st_nm}
-                        </div>
-                      </div>
-
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <div className="text-sm font-medium text-gray-600">
-                          District Code
-                        </div>
-                        <div className="text-lg font-mono text-gray-900">
-                          {selectedDistrict.properties.dt_code}
-                        </div>
-                      </div>
-
-                      {selectedDistrict.properties.st_code && (
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <div className="text-sm font-medium text-gray-600">
-                            State Code
-                          </div>
-                          <div className="text-lg font-mono text-gray-900">
-                            {selectedDistrict.properties.st_code}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Additional properties if they exist */}
-                    {Object.keys(selectedDistrict.properties).length > 3 && (
-                      <div className="mt-6">
-                        <h5 className="text-sm font-semibold text-gray-700 mb-2">
-                          Additional Properties
-                        </h5>
-                        <div className="bg-gray-50 p-3 rounded-md max-h-32 overflow-y-auto">
-                          {Object.entries(selectedDistrict.properties).map(
-                            ([key, value]) => {
-                              if (
-                                [
-                                  "district",
-                                  "st_nm",
-                                  "dt_code",
-                                  "st_code",
-                                ].includes(key)
-                              )
-                                return null;
-                              return (
-                                <div
-                                  key={key}
-                                  className="flex justify-between text-xs mb-1"
-                                >
-                                  <span className="text-gray-600 font-medium">
-                                    {key}:
-                                  </span>
-                                  <span className="text-gray-800 ml-2">
-                                    {String(value)}
-                                  </span>
-                                </div>
-                              );
-                            }
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => setSelectedDistrict(null)}
-                      className="w-full mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
-                    >
-                      Clear Selection
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    <div className="text-4xl mb-4">🗺️</div>
-                    <p className="text-lg font-medium mb-2">
-                      No District Selected
-                    </p>
-                    <p className="text-sm">
-                      Click on any district on the map to view its information
-                      here.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <DistrictInfoPanel
+              selectedDistrict={selectedDistrict}
+              onClearSelection={() => setSelectedDistrict(null)}
+            />
           </div>
         </div>
       </div>
