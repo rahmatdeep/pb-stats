@@ -46,9 +46,9 @@ const SupplyItemModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div className="bg-amber-50 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-5 rounded-t-2xl">
+        <div className="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-5 rounded-t-2xl">
           <div className="flex justify-between items-start">
             <div className="text-white">
               <div className="flex items-center gap-3 mb-2">
@@ -80,7 +80,7 @@ const SupplyItemModal = ({
           </div>
 
           {/* Current Status */}
-          <div className="bg-slate-50 rounded-xl p-5 space-y-4">
+          <div className="bg-amber-100 border-amber-400 rounded-xl p-5 space-y-4">
             <div className="flex items-center gap-2 mb-2">
               <Package className="w-4 h-4 text-slate-600" />
               <h4 className="font-semibold text-slate-800">
@@ -89,7 +89,7 @@ const SupplyItemModal = ({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center bg-white rounded-lg p-4 border border-slate-200">
+              <div className="text-center bg-white rounded-lg p-4 border border-amber-200">
                 <div className="text-3xl font-bold text-orange-600 mb-1">
                   {supply.currentQuantity}
                 </div>
@@ -98,7 +98,7 @@ const SupplyItemModal = ({
                 </div>
               </div>
 
-              <div className="text-center bg-white rounded-lg p-4 border border-slate-200">
+              <div className="text-center bg-white rounded-lg p-4 border border-amber-200">
                 <div className="text-3xl font-bold text-green-600 mb-1">
                   +{supply.bookedQuantity}
                 </div>
@@ -108,7 +108,7 @@ const SupplyItemModal = ({
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-slate-200">
+            <div className="bg-white rounded-lg p-4 border border-amber-200">
               <div className="text-center">
                 <div className="text-2xl font-bold text-slate-800 mb-1">
                   {totalQuantity} {supply.unit}
