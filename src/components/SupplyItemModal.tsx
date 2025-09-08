@@ -39,9 +39,9 @@ const SupplyItemModal = ({
   const urgency = getUrgencyLevel(supply);
   const getIcon = () => {
     if (urgency.level === "Critical" || urgency.level === "Medium") {
-      return <AlertTriangle className="w-5 h-5" />;
+      return <AlertTriangle className="w-4 h-4" />;
     }
-    return <CheckCircle className="w-5 h-5" />;
+    return <CheckCircle className="w-4 h-4" />;
   };
 
   return (
@@ -73,7 +73,7 @@ const SupplyItemModal = ({
         <div className="p-6 space-y-6">
           {/* Urgency Badge */}
           <div
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium ${urgency.color}`}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium text-md ${urgency.color}`}
           >
             {getIcon()}
             {urgency.level} Priority
@@ -81,8 +81,8 @@ const SupplyItemModal = ({
 
           {/* Current Status */}
           <div className="bg-slate-50 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3 mb-3">
-              <Package className="w-5 h-5 text-slate-600" />
+            <div className="flex items-center gap-2 mb-2">
+              <Package className="w-4 h-4 text-slate-600" />
               <h4 className="font-semibold text-slate-800">
                 Current Inventory
               </h4>
@@ -126,14 +126,14 @@ const SupplyItemModal = ({
             </div>
 
             <div>
-              <div className="flex justify-between items-center py-2">
+              <div className="flex justify-between items-center py-1">
                 <span className="text-slate-600">Daily Consumption:</span>
                 <span className="font-semibold text-slate-800">
                   {supply.avgConsumptionPerDay} {supply.unit}/day
                 </span>
               </div>
 
-              <div className="flex justify-between items-center py-2">
+              <div className="flex justify-between items-center py-1">
                 <span className="text-slate-600">Supply Duration:</span>
                 <span
                   className={`font-semibold ${
@@ -148,7 +148,7 @@ const SupplyItemModal = ({
 
           {/* Donation Suggestion */}
           <div className="bg-green-50 rounded-xl p-5 border border-green-200">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-2">
               <Calendar className="w-5 h-5 text-green-600" />
               <h4 className="font-semibold text-slate-800">
                 Donation Recommendation
