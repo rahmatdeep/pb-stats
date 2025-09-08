@@ -14,16 +14,10 @@ const DistrictInfoPanel = ({
   selectedDistrict,
   onClearSelection,
 }: DistrictInfoPanelProps) => {
-  const [expandedSites, setExpandedSites] = useState<Set<string>>(new Set());
+  const [expandedSite, setExpandedSite] = useState<string | null>(null);
 
   const toggleSite = (siteId: string) => {
-    const newExpanded = new Set(expandedSites);
-    if (newExpanded.has(siteId)) {
-      newExpanded.delete(siteId);
-    } else {
-      newExpanded.add(siteId);
-    }
-    setExpandedSites(newExpanded);
+    setExpandedSite(expandedSite === siteId ? null : siteId);
   };
 
   const getReliefData = (districtCode: string): DistrictReliefData | null => {
@@ -109,7 +103,7 @@ const DistrictInfoPanel = ({
                         </div>
                       </div>
                       <div className="ml-3">
-                        {expandedSites.has(site.id) ? (
+                        {expandedSite === site.id ? (
                           <ChevronUp className="w-5 h-5 text-slate-500" />
                         ) : (
                           <ChevronDown className="w-5 h-5 text-slate-500" />
@@ -117,7 +111,7 @@ const DistrictInfoPanel = ({
                       </div>
                     </button>
 
-                    {expandedSites.has(site.id) && (
+                    {expandedSite === site.id && (
                       <div className="border-t border-orange-200 bg-amber-50">
                         <ReliefSiteCard site={site} />
                       </div>
