@@ -104,18 +104,24 @@ const DistrictInfoPanel = ({
                       </div>
                       <div className="ml-3">
                         {expandedSite === site.id ? (
-                          <ChevronUp className="w-5 h-5 text-slate-500" />
+                          <ChevronUp className="w-5 h-5 text-slate-500 transition-transform duration-300" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 text-slate-500" />
+                          <ChevronDown className="w-5 h-5 text-slate-500 transition-transform duration-300" />
                         )}
                       </div>
                     </button>
 
-                    {expandedSite === site.id && (
-                      <div className="border-t border-orange-200 bg-amber-50">
+                    <div
+                      className={`border-t border-orange-200 bg-amber-50 transition-all duration-300 ease-in-out ${
+                        expandedSite === site.id
+                          ? "max-h-screen opacity-100"
+                          : "max-h-0 opacity-0 overflow-hidden"
+                      }`}
+                    >
+                      <div className="transition-transform duration-300 ease-in-out">
                         <ReliefSiteCard site={site} />
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
