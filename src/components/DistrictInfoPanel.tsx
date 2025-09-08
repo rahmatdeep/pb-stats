@@ -34,11 +34,11 @@ const DistrictInfoPanel = ({
 
   if (!selectedDistrict) {
     return (
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+      <div className="bg-amber-50 rounded-2xl shadow-xl border border-orange-200 overflow-hidden">
         <div className="p-8">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
-              <MapPin className="w-6 h-6 text-slate-400" />
+            <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-orange-100 to-amber-200 rounded-full flex items-center justify-center">
+              <MapPin className="w-6 h-6 text-orange-400" />
             </div>
             <h4 className="text-xl font-semibold text-slate-800 mb-3">
               No District Selected
@@ -52,8 +52,8 @@ const DistrictInfoPanel = ({
   const reliefData = getReliefData(selectedDistrict.properties.dt_code);
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden sticky top-4 max-h-[85vh] flex flex-col">
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 flex items-center justify-between">
+    <div className="bg-amber-50 rounded-2xl shadow-xl border border-orange-200 overflow-hidden sticky top-4 max-h-[85vh] flex flex-col">
+      <div className="bg-gradient-to-r  from-orange-500 to-red-600 px-6 py-5 flex items-center justify-between">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <MapPin className="w-5 h-5" />
           District Relief Info
@@ -76,7 +76,7 @@ const DistrictInfoPanel = ({
           {reliefData ? (
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
-                <Package className="w-4 h-4 text-indigo-600" />
+                <Package className="w-4 h-4 text-orange-600" />
                 <h5 className="text-lg font-semibold text-slate-800">
                   Relief Sites ({reliefData.sites.length})
                 </h5>
@@ -87,18 +87,18 @@ const DistrictInfoPanel = ({
                 {reliefData.sites.map((site) => (
                   <div
                     key={site.id}
-                    className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50"
+                    className="border border-orange-200 rounded-xl overflow-hidden bg-orange-50"
                   >
                     <button
                       onClick={() => toggleSite(site.id)}
-                      className="w-full px-5 py-4 text-left hover:bg-slate-100 transition-colors flex justify-between items-center"
+                      className="w-full px-5 py-4 text-left hover:bg-orange-100 transition-colors flex justify-between items-center"
                     >
                       <div className="flex-1">
                         <div className="font-semibold text-slate-800">
                           {site.name}
                         </div>
                         <div className="flex items-start gap-1 text-xs text-slate-600 mb-2">
-                          <MapPin className="w-3 h-3 mt-0.5 text-indigo-600 flex-shrink-0" />
+                          <MapPin className="w-3 h-3 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span className="leading-relaxed">
                             {site.address}
                           </span>
@@ -118,7 +118,7 @@ const DistrictInfoPanel = ({
                     </button>
 
                     {expandedSites.has(site.id) && (
-                      <div className="border-t border-slate-200 bg-white">
+                      <div className="border-t border-orange-200 bg-amber-50">
                         <ReliefSiteCard site={site} />
                       </div>
                     )}
@@ -128,8 +128,8 @@ const DistrictInfoPanel = ({
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center">
-                <Package className="w-10 h-10 text-amber-600" />
+              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-yellow-100 to-orange-200 rounded-full flex items-center justify-center">
+                <Package className="w-10 h-10 text-orange-600" />
               </div>
               <h4 className="text-xl font-semibold text-slate-800 mb-3">
                 No Relief Data Available

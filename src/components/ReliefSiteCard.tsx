@@ -16,7 +16,7 @@ const ReliefSiteCard = ({ site }: ReliefSiteCardProps) => {
       {/* Supplies */}
       <div className="space-y-4">
         <div className="flex items-center gap-3 mb-4">
-          <Package className="w-5 h-5 text-indigo-600" />
+          <Package className="w-5 h-5 text-orange-600" />
           <h6 className="font-semibold text-slate-800">Available Supplies</h6>
         </div>
 
@@ -46,7 +46,7 @@ const ReliefSiteCard = ({ site }: ReliefSiteCardProps) => {
                     {supply.currentQuantity} {supply.unit}
                   </div>
 
-                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-colors ml-2" />
+                  <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-orange-500 transition-colors ml-2" />
                 </div>
               </div>
             );
