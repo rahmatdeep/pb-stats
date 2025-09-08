@@ -5,6 +5,7 @@ import {
   X,
   AlertTriangle,
   CheckCircle,
+  MapPin,
 } from "lucide-react";
 import type { Supply } from "../types/reliefData";
 import { getUrgencyLevel } from "../utils/urgencyUtils";
@@ -54,7 +55,10 @@ const SupplyItemModal = ({
                 <span className="text-2xl">{supply.icon}</span>
                 <h3 className="text-xl font-bold">{supply.name}</h3>
               </div>
-              <p className="text-orange-100 text-sm">{siteName}</p>
+              <div className="flex gap-1">
+                <MapPin className="w-4 h-4 mt-[1px]" />
+                <p className="text-orange-100 text-sm">{siteName}</p>
+              </div>
             </div>
             <button
               onClick={onClose}

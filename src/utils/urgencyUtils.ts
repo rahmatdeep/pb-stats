@@ -8,7 +8,7 @@ export const getUrgencyLevel = (supply: Supply) => {
     return {
       level: "Critical",
       color: "text-red-700 bg-red-100 border-red-200",
-      bgColor: "bg-red-100 border-red-200 hover:border-red-300",
+      bgColor: "bg-red-200 border-red-300 hover:border-red-400",
     };
   }
   if (daysRemaining <= 2) {
