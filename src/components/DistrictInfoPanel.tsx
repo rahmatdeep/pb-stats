@@ -47,7 +47,7 @@ const DistrictInfoPanel = ({
 
   return (
     <div className="bg-amber-50 rounded-2xl shadow-xl border border-orange-200 overflow-hidden sticky top-4 max-h-[85vh] flex flex-col">
-      <div className="bg-gradient-to-r  from-orange-500 to-red-600 px-6 py-4 flex items-center justify-between">
+      <div className="bg-gradient-to-r  from-orange-600 to-red-600 px-6 py-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <MapPin className="w-5 h-5" />
           District Relief Info
