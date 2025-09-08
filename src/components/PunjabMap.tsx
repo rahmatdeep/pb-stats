@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import * as d3 from "d3";
 import DistrictInfoPanel from "./DistrictInfoPanel";
+import { mockReliefData } from "../assets/mockData";
 
 type Coordinates = [number, number];
 type Line = Coordinates[];
@@ -53,6 +54,11 @@ const PunjabMap = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<Geometry | null>(
     null
   );
+
+  const hasReliefData = (districtCode: string): boolean => {
+    return mockReliefData.some((data) => data.districtCode === districtCode);
+  };
+
   useEffect(() => {
     const loadMapData = async () => {
       try {
@@ -165,28 +171,34 @@ const PunjabMap = () => {
 
         const pathData = `M${coords.map((d) => d.join(",")).join("L")}Z`;
 
+        // Check if this district has relief data
+        const hasRelief = hasReliefData(district.properties.dt_code);
+        const isSelected =
+          selectedDistrict?.properties?.dt_code ===
+          district.properties?.dt_code;
+
         svg
           .append("path")
           .datum(district)
           .attr("d", pathData)
-          .attr("fill", (d) =>
-            selectedDistrict?.properties?.dt_code === d.properties?.dt_code
-              ? "#ea580c"
-              : "#fed7aa"
-          )
+          .attr("fill", () => {
+            if (isSelected) return "#ea580c"; // Selected color (dark orange)
+            if (hasRelief) return "#fdba74"; // Has relief data (medium orange)
+            return "#fed7aa"; // No relief data (light orange)
+          })
           .attr("stroke", "#ffffff")
           .attr("stroke-width", 0.5)
           .style("cursor", "pointer")
           .on("mouseover", function (_event, d) {
-            if (
-              selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
-            ) {
+            const districtIsSelected =
+              selectedDistrict?.properties?.dt_code === d.properties?.dt_code;
+
+            if (!districtIsSelected) {
               d3.select(this).attr("fill", "#fb923c");
             }
 
             tooltip.style("visibility", "visible").html(`
                 <strong>${d.properties.district}</strong><br/>
-                State: ${d.properties.st_nm}<br/>
                 Code: ${d.properties.dt_code}
               `);
           })
@@ -196,10 +208,15 @@ const PunjabMap = () => {
               .style("top", event.pageY - 10 + "px");
           })
           .on("mouseout", function (_event, d) {
-            if (
-              selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
-            ) {
-              d3.select(this).attr("fill", "#fed7aa");
+            const districtHasRelief = hasReliefData(d.properties.dt_code);
+            const districtIsSelected =
+              selectedDistrict?.properties?.dt_code === d.properties?.dt_code;
+
+            if (!districtIsSelected) {
+              d3.select(this).attr(
+                "fill",
+                districtHasRelief ? "#fdba74" : "#fed7aa"
+              );
             }
             tooltip.style("visibility", "hidden");
           })
