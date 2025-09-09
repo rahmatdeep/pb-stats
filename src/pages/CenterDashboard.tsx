@@ -16,17 +16,56 @@ const CenterDashboard = () => {
   const [currentSite, setCurrentSite] = useState<ReliefSite | null>(null);
   const [pendingDeliveries, setPendingDeliveries] = useState<PendingDelivery[]>(
     [
-      // Mock pending delivery for testing
       {
         referenceId: "DEL123456",
-        donorName: "Rajesh",
+        donorName: "Rajesh Kumar",
         donorPhone: "9876543210",
         supplyId: "water_1",
         supplyName: "Water Bottles",
         supplyUnit: "bottles",
         quantity: 2000,
-        expectedDate: "2025-09-09",
+        expectedDate: "2025-09-12",
         expectedTime: "14:00",
+        status: "submitted",
+        siteId: "site_1",
+        siteName: "Golden Temple Relief Center",
+        representative: {
+          name: "Harpreet Singh",
+          phone: "9876543210",
+          centerId: "CENTER001",
+        },
+        createdAt: new Date().toISOString(),
+      },
+      {
+        referenceId: "DEL123457",
+        donorName: "Priya Singh",
+        donorPhone: "9887654321",
+        supplyId: "water_1",
+        supplyName: "Water Bottles",
+        supplyUnit: "bottles",
+        quantity: 500,
+        expectedDate: "2025-09-13", // 4 days later
+        expectedTime: "10:00",
+        status: "submitted",
+        siteId: "site_1",
+        siteName: "Golden Temple Relief Center",
+        representative: {
+          name: "Harpreet Singh",
+          phone: "9876543210",
+          centerId: "CENTER001",
+        },
+        createdAt: new Date().toISOString(),
+      },
+      {
+        referenceId: "DEL123458",
+        donorName: "Amit Patel",
+        donorPhone: "9765432109",
+        supplyId: "food_1",
+        supplyName: "Food Packets",
+        supplyUnit: "packets",
+        quantity: 25,
+        expectedDate: "2025-09-11",
+        expectedTime: "16:30",
         status: "submitted",
         siteId: "site_1",
         siteName: "Golden Temple Relief Center",
@@ -122,19 +161,6 @@ const CenterDashboard = () => {
     }
   };
 
-  if (!currentSite) {
-    return (
-      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">
-            Loading Dashboard...
-          </h2>
-          <p className="text-slate-600">Center ID: {centerId}</p>
-        </div>
-      </div>
-    );
-  }
-
   const handleModifyDelivery = (
     deliveryId: string,
     newQuantity: number,
@@ -157,6 +183,19 @@ const CenterDashboard = () => {
     // Show success message
     alert(`Delivery ${deliveryId} has been modified successfully!`);
   };
+
+  if (!currentSite) {
+    return (
+      <div className="min-h-screen bg-amber-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-slate-800 mb-2">
+            Loading Dashboard...
+          </h2>
+          <p className="text-slate-600">Center ID: {centerId}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-amber-50">
@@ -182,7 +221,7 @@ const CenterDashboard = () => {
               pendingDeliveries={pendingDeliveries.filter(
                 (d) => d.status === "submitted"
               )}
-              supplies={currentSite.supplies} // Add supplies for smart decisions
+              supplies={currentSite.supplies}
               onConfirmIntent={handleConfirmDeliveryIntent}
               onRejectIntent={handleRejectDeliveryIntent}
               onModifyDelivery={handleModifyDelivery}

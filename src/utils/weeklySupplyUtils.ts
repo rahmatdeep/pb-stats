@@ -1,10 +1,16 @@
 import type { Supply, WeeklySupplyStatus } from "../types";
 
 export const calculateWeeklyStatus = (supply: Supply): WeeklySupplyStatus => {
+  // Use ONLY current stock for days left calculation (critical for urgency detection)
+  const currentStock = supply.currentQuantity;
+  const weeklyNeed = supply.avgConsumptionPerDay * 7;
+
+  // This is the key - days left should be based on current stock only
+  const daysOfSupply = Math.floor(currentStock / supply.avgConsumptionPerDay);
+
+  // Total available includes booked for other planning calculations
   const totalAvailable = supply.currentQuantity + supply.bookedQuantity;
-  const weeklyNeed = supply.avgConsumptionPerDay * 7; // Simple calculation!
   const surplus = totalAvailable - weeklyNeed;
-  const daysOfSupply = Math.floor(totalAvailable / supply.avgConsumptionPerDay);
 
   let status: WeeklySupplyStatus["status"];
   if (daysOfSupply < 2) status = "critical";
@@ -16,10 +22,10 @@ export const calculateWeeklyStatus = (supply: Supply): WeeklySupplyStatus => {
     totalAvailable,
     weeklyNeed,
     surplus,
-    daysOfSupply,
-    status,
+    daysOfSupply, // This will be 0.8 for your 120 bottles scenario
+    status, // This will be "critical"
   };
-};
+};                                                                              
 
 export const getStatusStyles = (status: WeeklySupplyStatus["status"]) => {
   const styles = {
