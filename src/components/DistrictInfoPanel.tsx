@@ -35,6 +35,12 @@ const DistrictInfoPanel = ({
   };
 
   if (!selectedDistrict) {
+    const totalDistricts = mockReliefData.length;
+    const totalSites = mockReliefData.reduce(
+      (sum, district) => sum + district.sites.length,
+      0
+    );
+
     return (
       <div className="bg-amber-50 rounded-2xl shadow-xl border border-orange-200 overflow-hidden">
         <div className="p-8">
@@ -43,8 +49,22 @@ const DistrictInfoPanel = ({
               <MapPin className="w-6 h-6 text-orange-400" />
             </div>
             <h4 className="text-xl font-semibold text-slate-800 mb-3">
-              No District Selected
+              Select a District
             </h4>
+            <p className="text-slate-600 mb-2 text-sm leading-relaxed">
+              Relief operations are active in{" "}
+              <strong className="text-orange-600">
+                {totalDistricts} districts
+              </strong>{" "}
+              with{" "}
+              <strong className="text-orange-600">
+                {totalSites} relief centers
+              </strong>
+            </p>
+            <p className="text-xs text-slate-500">
+              Click any highlighted district on the map to view detailed
+              information
+            </p>
           </div>
         </div>
       </div>

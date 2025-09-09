@@ -288,12 +288,23 @@ const PunjabMap = () => {
                 <div className="bg-orange-50 rounded-xl p-4">
                   <svg ref={svgRef} className="w-full h-auto max-w-full"></svg>
                 </div>
-
-                <div className="mt-4 p-4 bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl">
-                  <p className="text-sm text-slate-700 text-center">
-                    💡 <strong>Tap any district</strong> to view relief sites
-                    and supply information
-                  </p>
+                <div className="mt-2 p-4 bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl">
+                  <div className="text-sm text-slate-700 text-center space-y-1">
+                    <p>
+                      💡 <strong>Tap any district</strong> to view relief sites
+                      and supply information
+                    </p>
+                    <div className="flex items-center justify-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-orange-300 rounded border border-white"></div>
+                        <span>Has Relief Centers</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-orange-200 rounded border border-white"></div>
+                        <span>No Relief Data</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
