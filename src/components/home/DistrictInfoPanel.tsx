@@ -9,8 +9,8 @@ import {
   User,
 } from "lucide-react";
 import { type Geometry } from "./PunjabMap";
-import { mockReliefData } from "../assets/mockData";
-import type { DistrictReliefData } from "../types";
+import { mockReliefData } from "../../assets/mockData";
+import type { DistrictReliefData } from "../../types";
 import ReliefSiteCard from "./ReliefSiteCard";
 
 interface DistrictInfoPanelProps {

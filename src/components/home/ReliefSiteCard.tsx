@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Package, ChevronRight } from "lucide-react";
-import type { ReliefSite, Supply } from "../types";
+import type { ReliefSite, Supply } from "../../types";
 import SupplyItemModal from "./SupplyItemModal";
-import { getUrgencyLevel } from "../utils/urgencyUtils";
+import { getUrgencyLevel } from "../../utils/urgencyUtils";
 
 interface ReliefSiteCardProps {
   site: ReliefSite;
