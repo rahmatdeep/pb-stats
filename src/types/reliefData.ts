@@ -13,6 +13,10 @@ export interface ReliefSite {
   name: string;
   address: string;
   supplies: Supply[];
+  representative: {
+    name: string;
+    phone: string;
+  };
 }
 
 export interface DistrictReliefData {

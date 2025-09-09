@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { MapPin, Package, ChevronDown, ChevronUp, X } from "lucide-react";
+import {
+  MapPin,
+  Package,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Phone,
+  User,
+} from "lucide-react";
 import { type Geometry } from "./PunjabMap";
 import { mockReliefData } from "../assets/mockData";
 import type { DistrictReliefData } from "../types/reliefData";
@@ -91,12 +99,25 @@ const DistrictInfoPanel = ({
                         <div className="font-semibold text-slate-800">
                           {site.name}
                         </div>
-                        <div className="flex items-start gap-1 text-xs text-slate-600 mb-2">
+                        <div className="flex items-start gap-1 text-xs text-slate-600">
                           <MapPin className="w-3 h-3 mt-0.5 text-orange-600 flex-shrink-0" />
                           <span className="leading-relaxed">
                             {site.address}
                           </span>
                         </div>
+                        <div className="flex items-center gap-3 text-xs text-slate-600 mb-2">
+                          <div className="flex items-center gap-1">
+                            <User className="w-3 h-3 text-orange-600" />
+                            <span>{site.representative.name}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Phone className="w-3 h-3 text-orange-600" />
+                            <span className="font-mono">
+                              {site.representative.phone}
+                            </span>
+                          </div>
+                        </div>
+
                         <div className="text-sm text-slate-700 flex items-center gap-2">
                           <Package className="w-4 h-4" />
                           {site.supplies.length} supplies available

@@ -10,6 +10,10 @@ export const mockReliefData: DistrictReliefData[] = [
         id: "site_1",
         name: "Golden Temple Relief Center",
         address: "Golden Temple Complex, Amritsar",
+        representative: {
+          name: "Harpreet Singh",
+          phone: "9876543210",
+        },
         supplies: [
           {
             id: "water_1",
@@ -44,6 +48,10 @@ export const mockReliefData: DistrictReliefData[] = [
         id: "site_2",
         name: "Community Center Relief Point",
         address: "Mall Road, Amritsar",
+        representative: {
+          name: "Priya Sharma",
+          phone: "9887654321",
+        },
         supplies: [
           {
             id: "water_2",
@@ -75,6 +83,10 @@ export const mockReliefData: DistrictReliefData[] = [
         id: "site_3",
         name: "Industrial Area Relief Center",
         address: "Industrial Area A, Ludhiana",
+        representative: {
+          name: "Priya Sharma",
+          phone: "9887654321",
+        },
         supplies: [
           {
             id: "blanket_1",
@@ -106,6 +118,10 @@ export const mockReliefData: DistrictReliefData[] = [
         id: "site_4",
         name: "Central Relief Hub",
         address: "GT Road, Jalandhar",
+        representative: {
+          name: "Harpreet Singh",
+          phone: "9876543210",
+        },
         supplies: [
           {
             id: "water_3",
