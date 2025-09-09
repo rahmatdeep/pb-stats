@@ -1,4 +1,4 @@
-import type { DistrictReliefData } from "../types/reliefData";
+import type { DistrictReliefData } from "../types";
 
 // Mock data
 export const mockReliefData: DistrictReliefData[] = [
@@ -13,6 +13,7 @@ export const mockReliefData: DistrictReliefData[] = [
         representative: {
           name: "Harpreet Singh",
           phone: "9876543210",
+          centerId: "C001",
         },
         supplies: [
           {
@@ -51,6 +52,7 @@ export const mockReliefData: DistrictReliefData[] = [
         representative: {
           name: "Priya Sharma",
           phone: "9887654321",
+          centerId: "C002",
         },
         supplies: [
           {
@@ -86,6 +88,7 @@ export const mockReliefData: DistrictReliefData[] = [
         representative: {
           name: "Priya Sharma",
           phone: "9887654321",
+          centerId: "C003",
         },
         supplies: [
           {
@@ -121,6 +124,7 @@ export const mockReliefData: DistrictReliefData[] = [
         representative: {
           name: "Harpreet Singh",
           phone: "9876543210",
+          centerId: "C004",
         },
         supplies: [
           {

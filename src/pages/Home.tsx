@@ -1,4 +1,4 @@
-import PunjabMap from "../components/PunjabMap";
+import PunjabMap from "../components/home/PunjabMap";
 
 function Home() {
   return <PunjabMap />;

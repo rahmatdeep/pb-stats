@@ -1,4 +1,4 @@
-import type { Supply } from "../types/reliefData";
+import type { Supply } from "../types";
 
 export const getUrgencyLevel = (supply: Supply) => {
   const totalQuantity = supply.currentQuantity + supply.bookedQuantity;
