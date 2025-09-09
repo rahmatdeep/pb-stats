@@ -4,7 +4,6 @@ import {
   Package,
   X,
   AlertTriangle,
-  CheckCircle,
   MapPin,
 } from "lucide-react";
 import type { Supply } from "../types/reliefData";
@@ -37,12 +36,6 @@ const SupplyItemModal = ({
   };
 
   const urgency = getUrgencyLevel(supply);
-  const getIcon = () => {
-    if (urgency.level === "Critical" || urgency.level === "Medium") {
-      return <AlertTriangle className="w-4 h-4" />;
-    }
-    return <CheckCircle className="w-4 h-4" />;
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -72,12 +65,14 @@ const SupplyItemModal = ({
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Urgency Badge */}
-          <div
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium text-md ${urgency.color}`}
-          >
-            {getIcon()}
-            {urgency.level} Priority
-          </div>
+          {urgency.level !== "Low" && (
+            <div
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border font-medium text-md ${urgency.color}`}
+            >
+              <AlertTriangle className="w-4 h-4" />
+              {urgency.level} Priority
+            </div>
+          )}
 
           {/* Current Status */}
           <div className="bg-amber-100 border-amber-400 rounded-xl p-5 space-y-4">
@@ -108,12 +103,12 @@ const SupplyItemModal = ({
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-4 border border-amber-200">
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
               <div className="text-center">
                 <div className="text-2xl font-bold text-slate-800 mb-1">
                   {totalQuantity} {supply.unit}
                 </div>
-                <div className="text-sm text-slate-600">Total Available</div>
+                <div className="text-sm text-slate-600">Expected Total</div>
               </div>
             </div>
           </div>
@@ -162,13 +157,6 @@ const SupplyItemModal = ({
             <div className="bg-white rounded-lg p-4 border border-green-300">
               <div className="font-semibold text-green-700">
                 {getSuggestedDonationDate()}
-              </div>
-              <div className="text-sm text-slate-600">
-                Suggested quantity:{" "}
-                <span className="font-medium">
-                  {supply.avgConsumptionPerDay * 7} {supply.unit}
-                </span>{" "}
-                (1 week supply)
               </div>
             </div>
           </div>
