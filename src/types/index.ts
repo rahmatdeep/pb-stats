@@ -55,3 +55,12 @@ export interface DeliveryFormData {
   expectedDate: string;
   expectedTime: string;
 }
+
+export type SupplyStatus = "critical" | "low" | "adequate" | "surplus";
+export interface WeeklySupplyStatus {
+  totalAvailable: number;
+  weeklyNeed: number; // avgConsumptionPerDay * 7
+  surplus: number;
+  daysOfSupply: number;
+  status: SupplyStatus;
+}

@@ -19,12 +19,12 @@ const CenterDashboard = () => {
       // Mock pending delivery for testing
       {
         referenceId: "DEL123456",
-        donorName: "John Doe",
+        donorName: "Rajesh",
         donorPhone: "9876543210",
         supplyId: "water_1",
         supplyName: "Water Bottles",
         supplyUnit: "bottles",
-        quantity: 100,
+        quantity: 2000,
         expectedDate: "2025-09-09",
         expectedTime: "14:00",
         status: "submitted",
@@ -135,6 +135,29 @@ const CenterDashboard = () => {
     );
   }
 
+  const handleModifyDelivery = (
+    deliveryId: string,
+    newQuantity: number,
+    newDate: string,
+    newTime: string
+  ) => {
+    setPendingDeliveries((prev) =>
+      prev.map((d) =>
+        d.referenceId === deliveryId
+          ? {
+              ...d,
+              quantity: newQuantity,
+              expectedDate: newDate,
+              expectedTime: newTime,
+            }
+          : d
+      )
+    );
+
+    // Show success message
+    alert(`Delivery ${deliveryId} has been modified successfully!`);
+  };
+
   return (
     <div className="min-h-screen bg-amber-50">
       {/* Header */}
@@ -159,8 +182,10 @@ const CenterDashboard = () => {
               pendingDeliveries={pendingDeliveries.filter(
                 (d) => d.status === "submitted"
               )}
+              supplies={currentSite.supplies} // Add supplies for smart decisions
               onConfirmIntent={handleConfirmDeliveryIntent}
               onRejectIntent={handleRejectDeliveryIntent}
+              onModifyDelivery={handleModifyDelivery}
             />
           </div>
 
@@ -170,7 +195,7 @@ const CenterDashboard = () => {
               confirmedDeliveries={pendingDeliveries.filter(
                 (d) => d.status === ("confirmed" as DeliveryStatus)
               )}
-              supplies={currentSite.supplies} // Add this
+              supplies={currentSite.supplies}
               onConfirmActualDelivery={handleConfirmActualDelivery}
             />
           </div>

@@ -7,10 +7,11 @@ import {
   MoveDown,
 } from "lucide-react";
 import type { PendingDelivery, Supply } from "../../types";
+import { calculateWeeklyStatus } from "../../utils/weeklySupplyUtils";
 
 interface DeliveryCalendarPanelProps {
   confirmedDeliveries: PendingDelivery[];
-  supplies: Supply[]; // Add this to calculate consumption
+  supplies: Supply[];
   onConfirmActualDelivery: (deliveryId: string) => void;
 }
 
@@ -19,7 +20,7 @@ const DeliveryCalendarPanel = ({
   supplies,
   onConfirmActualDelivery,
 }: DeliveryCalendarPanelProps) => {
-  // Calculate supply status for each day
+  // Calculate supply status for each day based on weekly consumption
   const calculateDaySupplyStatus = (date: string) => {
     const dayDeliveries = confirmedDeliveries.filter(
       (d) => d.expectedDate === date
@@ -34,15 +35,20 @@ const DeliveryCalendarPanel = ({
 
     let totalStatus = "green"; // Start optimistic
 
-    // Check each supply type
+    // Check each supply type using weekly logic
     supplies.forEach((supply) => {
       const expectedDelivery = supplyDeliveries[supply.id] || 0;
-      const avgConsumption = supply.avgConsumptionPerDay;
+      const weeklyStatus = calculateWeeklyStatus(supply);
+      const avgConsumptionPerDay = supply.avgConsumptionPerDay;
 
-      if (expectedDelivery === 0) {
-        totalStatus = "red"; // No deliveries for critical supply
-      } else if (expectedDelivery < avgConsumption && totalStatus !== "red") {
-        totalStatus = "yellow"; // Insufficient but some delivery
+      if (weeklyStatus.status === "critical" && expectedDelivery === 0) {
+        totalStatus = "red"; // Critical supply with no delivery
+      } else if (
+        weeklyStatus.status === "low" &&
+        expectedDelivery < avgConsumptionPerDay &&
+        totalStatus !== "red"
+      ) {
+        totalStatus = "yellow"; // Low supply with insufficient delivery
       }
     });
 
@@ -106,11 +112,14 @@ const DeliveryCalendarPanel = ({
           <div className="flex items-center gap-3">
             <Calendar className="w-6 h-6 text-white" />
             <h2 className="text-xl font-bold text-white">
-              Supply Forecast Calendar
+              Weekly Supply Calendar
             </h2>
           </div>
           <div className="text-orange-100 text-sm">Next 7 days</div>
         </div>
+        <p className="text-orange-100 text-sm mt-1">
+          Track deliveries against weekly consumption targets
+        </p>
       </div>
 
       {/* Legend */}
@@ -118,7 +127,7 @@ const DeliveryCalendarPanel = ({
         <div className="flex items-center gap-6 text-xs">
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            <span className="text-slate-600">Sufficient Supply</span>
+            <span className="text-slate-600">Adequate Supply</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
@@ -164,7 +173,7 @@ const DeliveryCalendarPanel = ({
           ))}
         </div>
 
-        {/* Detailed Deliveries for Today/Tomorrow */}
+        {/* Detailed Deliveries for Today */}
         <div className="mt-6">
           <h3 className="font-semibold text-slate-800 mb-3">
             Today's Deliveries
@@ -183,37 +192,51 @@ const DeliveryCalendarPanel = ({
                   (d) =>
                     d.expectedDate === new Date().toISOString().split("T")[0]
                 )
-                .map((delivery) => (
-                  <div
-                    key={delivery.referenceId}
-                    className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-xs font-bold text-orange-600">
-                        #{delivery.referenceId}
-                      </span>
-                      <div>
-                        <p className="font-semibold text-slate-800">
-                          {delivery.donorName}
-                        </p>
-                        <p className="text-sm text-slate-600">
-                          {delivery.quantity} {delivery.supplyUnit} of{" "}
-                          {delivery.supplyName}
-                        </p>
-                      </div>
-                    </div>
+                .map((delivery) => {
+                  const supply = supplies.find(
+                    (s) => s.id === delivery.supplyId
+                  );
+                  const weeklyStatus = supply
+                    ? calculateWeeklyStatus(supply)
+                    : null;
 
-                    <button
-                      onClick={() =>
-                        onConfirmActualDelivery(delivery.referenceId)
-                      }
-                      className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+                  return (
+                    <div
+                      key={delivery.referenceId}
+                      className="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-200"
                     >
-                      <Package className="w-3 h-3" />
-                      Mark Delivered
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-xs font-bold text-orange-600">
+                          #{delivery.referenceId}
+                        </span>
+                        <div>
+                          <p className="font-semibold text-slate-800">
+                            {delivery.donorName}
+                          </p>
+                          <p className="text-sm text-slate-600">
+                            {delivery.quantity} {delivery.supplyUnit} of{" "}
+                            {delivery.supplyName}
+                          </p>
+                          {weeklyStatus && (
+                            <p className="text-xs text-slate-500">
+                              Current: {weeklyStatus.daysOfSupply}d supply left
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          onConfirmActualDelivery(delivery.referenceId)
+                        }
+                        className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg text-sm font-medium flex items-center gap-1 transition-colors"
+                      >
+                        <Package className="w-3 h-3" />
+                        Mark Delivered
+                      </button>
+                    </div>
+                  );
+                })}
             </div>
           )}
         </div>
