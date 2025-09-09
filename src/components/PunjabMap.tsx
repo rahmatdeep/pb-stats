@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import * as d3 from "d3";
+import DistrictInfoPanel from "./DistrictInfoPanel";
+import { mockReliefData } from "../assets/mockData";
 
 type Coordinates = [number, number];
-
 type Line = Coordinates[];
-
 type GlobalArcs = Line[];
-
 type ArcIndex = number;
-
 type Ring = ArcIndex[];
-
 type PolygonGeometry = Ring[];
-
 type MultiPolygonGeometry = PolygonGeometry[];
 
 interface BaseGeometry {
@@ -35,7 +32,7 @@ interface MultiPolygon extends BaseGeometry {
   arcs: MultiPolygonGeometry;
 }
 
-type Geometry = Polygon | MultiPolygon;
+export type Geometry = Polygon | MultiPolygon;
 
 interface MapJSON {
   type: string;
@@ -57,6 +54,10 @@ const PunjabMap = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<Geometry | null>(
     null
   );
+
+  const hasReliefData = (districtCode: string): boolean => {
+    return mockReliefData.some((data) => data.districtCode === districtCode);
+  };
 
   useEffect(() => {
     const loadMapData = async () => {
@@ -170,28 +171,34 @@ const PunjabMap = () => {
 
         const pathData = `M${coords.map((d) => d.join(",")).join("L")}Z`;
 
+        // Check if this district has relief data
+        const hasRelief = hasReliefData(district.properties.dt_code);
+        const isSelected =
+          selectedDistrict?.properties?.dt_code ===
+          district.properties?.dt_code;
+
         svg
           .append("path")
           .datum(district)
           .attr("d", pathData)
-          .attr("fill", (d) =>
-            selectedDistrict?.properties?.dt_code === d.properties?.dt_code
-              ? "#4a90e2"
-              : "#e0e0e0"
-          )
+          .attr("fill", () => {
+            if (isSelected) return "#ea580c"; // Selected color (dark orange)
+            if (hasRelief) return "#fdba74"; // Has relief data (medium orange)
+            return "#fed7aa"; // No relief data (light orange)
+          })
           .attr("stroke", "#ffffff")
           .attr("stroke-width", 0.5)
           .style("cursor", "pointer")
           .on("mouseover", function (_event, d) {
-            if (
-              selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
-            ) {
-              d3.select(this).attr("fill", "#6ba3f5");
+            const districtIsSelected =
+              selectedDistrict?.properties?.dt_code === d.properties?.dt_code;
+
+            if (!districtIsSelected) {
+              d3.select(this).attr("fill", "#fb923c");
             }
 
             tooltip.style("visibility", "visible").html(`
                 <strong>${d.properties.district}</strong><br/>
-                State: ${d.properties.st_nm}<br/>
                 Code: ${d.properties.dt_code}
               `);
           })
@@ -201,10 +208,15 @@ const PunjabMap = () => {
               .style("top", event.pageY - 10 + "px");
           })
           .on("mouseout", function (_event, d) {
-            if (
-              selectedDistrict?.properties?.dt_code !== d.properties?.dt_code
-            ) {
-              d3.select(this).attr("fill", "#e0e0e0");
+            const districtHasRelief = hasReliefData(d.properties.dt_code);
+            const districtIsSelected =
+              selectedDistrict?.properties?.dt_code === d.properties?.dt_code;
+
+            if (!districtIsSelected) {
+              d3.select(this).attr(
+                "fill",
+                districtHasRelief ? "#fdba74" : "#fed7aa"
+              );
             }
             tooltip.style("visibility", "hidden");
           })
@@ -215,8 +227,8 @@ const PunjabMap = () => {
             svg.selectAll("path").attr("fill", function (pathData) {
               return (pathData as Geometry).properties?.dt_code ===
                 d.properties?.dt_code
-                ? "#4a90e2"
-                : "#e0e0e0";
+                ? "#ea580c"
+                : "#fed7aa";
             });
           });
       });
@@ -225,151 +237,85 @@ const PunjabMap = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Loading Punjab map...</div>
+      <div className="min-h-screen bg-gradient-to-br  from-amber-50 to-orange-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-orange-600 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-medium text-slate-700">
+            Loading Punjab map...
+          </p>
+          <p className="text-sm text-slate-500 mt-1">
+            Please wait while we prepare the relief data
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-red-500">
-          Error: {error}
-          <br />
-          <small className="text-gray-500 mt-2 block">
+      <div className="min-h-screen bg-gradient-to-br  from-amber-50 to-orange-100 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">
+            Map Loading Error
+          </h3>
+          <p className="text-red-600 mb-2">{error}</p>
+          <p className="text-sm text-slate-500">
             Make sure punjab.json exists in public/projected_maps/
-          </small>
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Punjab Districts
-      </h2>
-
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br  from-amber-50 to-orange-100">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map Section */}
           <div className="lg:col-span-2">
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg bg-white p-4">
-              <svg ref={svgRef} className="w-full h-auto max-w-full"></svg>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Hover over districts for details • Click to select
-              </p>
+            <div className="bg-amber-50 rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPin className="w-5 h-5 text-orange-600" />
+                  <h2 className="text-lg font-semibold text-slate-800">
+                    Punjab District Map
+                  </h2>
+                </div>
+
+                <div className="bg-orange-50 rounded-xl p-4">
+                  <svg ref={svgRef} className="w-full h-auto max-w-full"></svg>
+                </div>
+                <div className="mt-2 p-4 bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl">
+                  <div className="text-sm text-slate-700 text-center space-y-1">
+                    <p>
+                      💡 <strong>Tap any district</strong> to view relief sites
+                      and supply information
+                    </p>
+                    <div className="flex items-center justify-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-orange-300 rounded border border-white"></div>
+                        <span>Has Relief Centers</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-orange-200 rounded border border-white"></div>
+                        <span>No Relief Data</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Data Panel */}
+          {/* District Info Panel */}
           <div className="lg:col-span-1">
-            <div className="border border-gray-300 rounded-lg shadow-lg bg-white sticky top-4">
-              <div className="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  District Information
-                </h3>
-              </div>
-
-              <div className="p-4">
-                {selectedDistrict ? (
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-xl font-bold text-blue-600 mb-2">
-                        {selectedDistrict.properties.district}
-                      </h4>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <div className="text-sm font-medium text-gray-600">
-                          State
-                        </div>
-                        <div className="text-lg text-gray-900">
-                          {selectedDistrict.properties.st_nm}
-                        </div>
-                      </div>
-
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <div className="text-sm font-medium text-gray-600">
-                          District Code
-                        </div>
-                        <div className="text-lg font-mono text-gray-900">
-                          {selectedDistrict.properties.dt_code}
-                        </div>
-                      </div>
-
-                      {selectedDistrict.properties.st_code && (
-                        <div className="bg-gray-50 p-3 rounded-md">
-                          <div className="text-sm font-medium text-gray-600">
-                            State Code
-                          </div>
-                          <div className="text-lg font-mono text-gray-900">
-                            {selectedDistrict.properties.st_code}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Additional properties if they exist */}
-                    {Object.keys(selectedDistrict.properties).length > 3 && (
-                      <div className="mt-6">
-                        <h5 className="text-sm font-semibold text-gray-700 mb-2">
-                          Additional Properties
-                        </h5>
-                        <div className="bg-gray-50 p-3 rounded-md max-h-32 overflow-y-auto">
-                          {Object.entries(selectedDistrict.properties).map(
-                            ([key, value]) => {
-                              if (
-                                [
-                                  "district",
-                                  "st_nm",
-                                  "dt_code",
-                                  "st_code",
-                                ].includes(key)
-                              )
-                                return null;
-                              return (
-                                <div
-                                  key={key}
-                                  className="flex justify-between text-xs mb-1"
-                                >
-                                  <span className="text-gray-600 font-medium">
-                                    {key}:
-                                  </span>
-                                  <span className="text-gray-800 ml-2">
-                                    {String(value)}
-                                  </span>
-                                </div>
-                              );
-                            }
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => setSelectedDistrict(null)}
-                      className="w-full mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm"
-                    >
-                      Clear Selection
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    <div className="text-4xl mb-4">🗺️</div>
-                    <p className="text-lg font-medium mb-2">
-                      No District Selected
-                    </p>
-                    <p className="text-sm">
-                      Click on any district on the map to view its information
-                      here.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <DistrictInfoPanel
+              selectedDistrict={selectedDistrict}
+              onClearSelection={() => setSelectedDistrict(null)}
+            />
           </div>
         </div>
       </div>
